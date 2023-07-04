@@ -79,6 +79,7 @@
             React.useEffect(() => {
                 const width = ref.current.offsetWidth;
                 const height = ref.current.offsetHeight;
+                const offsetLeft = ref.current.offsetLeft;
                 if (onSize) {
                     onSize({ width, height });
                 }
@@ -212,6 +213,7 @@
             const initedRef = React.useRef(false);
             const [activeTab, setActiveTab] = React.useState('');
             const [hasRightScroll, setHasRightScroll] = React.useState(false);
+            const [offsetLeft, setOffsetLeft] = React.useState(window.innerWidth);
 
             React.useEffect(() => {
                 if (!activeTab && !initedRef.current) {
@@ -242,6 +244,8 @@
             const onArrowCLick = () => {
                 const scroller = ref.current.querySelector('.section__panel:not(.section__panel_hidden)');
                 if (scroller) {
+                    setOffsetLeft(old => old + 400);
+                    console.log(offsetLeft);
                     scroller.scrollTo({
                         left: scroller.scrollLeft + 400,
                         behavior: 'smooth'
@@ -374,9 +378,18 @@
 
                     <div className="section__panel-wrapper" ref={ref}>
                         {TABS_KEYS.map(key =>
-                            key === activeTab && <div key={key} role="tabpanel" className={'section__panel' + (key === activeTab ? '' : ' section__panel_hidden')} aria-hidden={key === activeTab ? 'false' : 'true'} id={`panel_${key}`} aria-labelledby={`tab_${key}`}>
+                            key === activeTab &&
+                            <div
+                                key={key}
+                                role="tabpanel"
+                                className={'section__panel' + (key === activeTab ? '' : ' section__panel_hidden')}
+                                aria-hidden={key === activeTab ? 'false' : 'true'}
+                                id={`panel_${key}`}
+                                aria-labelledby={`tab_${key}`}
+                            >
                                 <ul className="section__panel-list">
                                     {TABS[key].items.map((item, index) =>
+                                        offsetLeft / 200 > index &&
                                         <Event
                                             key={index}
                                             {...item}
